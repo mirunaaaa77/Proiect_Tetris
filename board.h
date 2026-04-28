@@ -22,4 +22,10 @@ void board_lock_piece(BOARD board, int cell[][2], int count, int color);
 
 int board_is_row_full(BOARD board, int row);
 
+void board_clear_row(BOARD board, int row);
+
+int board_clear_full_rows(BOARD board);
+
+void board_print(BOARD board); 
+
 #endif
