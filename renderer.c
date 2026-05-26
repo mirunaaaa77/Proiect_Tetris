@@ -1,3 +1,4 @@
+#include <locale.h>
 #include "renderer.h"
 #include "board.h"
 #include "tetromino.h"
@@ -5,14 +6,15 @@
 /* ── renderer_init ──────────────────────── */
 void renderer_init()
 {
-    initscr();           /* porneste ncurses */
-    noecho();            /* nu afisa tastele apasate */
-    cbreak();            /* nu astepta Enter */
-    keypad(stdscr, TRUE); /* activeaza sagetile */
-    curs_set(0);         /* ascunde cursorul */
-    nodelay(stdscr, TRUE); /* input non-blocant */
+    setlocale(LC_ALL, "");
+    initscr();           // porneste ncurses
+    noecho();            // nu afisa tastele apasate
+    cbreak();            // nu astepta Enter
+    keypad(stdscr, TRUE); // activeaza sagetile
+    curs_set(0);         // ascunde cursorul
+    nodelay(stdscr, TRUE); // input non-blocant 
 
-    /* culori */
+    // culori
     start_color();
     init_pair(1, COLOR_CYAN,    COLOR_BLACK); /* I */
     init_pair(2, COLOR_YELLOW,  COLOR_BLACK); /* O */
@@ -23,10 +25,10 @@ void renderer_init()
     init_pair(7, COLOR_RED,     COLOR_BLACK); /* Z */
 }
 
-/* ── renderer_cleanup ───────────────────── */
+// ── renderer_cleanup ───────────────────── 
 void renderer_cleanup()
 {
-    endwin(); /* opreste ncurses */
+    endwin(); // opreste ncurses
 }
 
 /* ── renderer_clear ─────────────────────── */
@@ -57,7 +59,7 @@ void renderer_draw_board(const BOARD board)
             if (board[i][j] != CELL_EMPTY)
             {
                 attron(COLOR_PAIR(board[i][j]));
-                mvaddstr(i, j * 2 + 1, "[]");
+                mvaddstr(i, j * 2 + 1, "██");
                 attroff(COLOR_PAIR(board[i][j]));
             }
             else
@@ -85,7 +87,7 @@ void renderer_draw_piece(const Tetro_piece *piece)
         if (row >= 0 && row < BOARD_ROWS &&
             col >= 0 && col < BOARD_COLUMNS)
         {
-            mvaddstr(row, col * 2 + 1, "[]");
+            mvaddstr(row, col * 2 + 1, "██");
         }
     }
     attroff(COLOR_PAIR(color));

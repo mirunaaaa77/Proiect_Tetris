@@ -77,6 +77,7 @@ int tetromino_can_place(Tetro_piece *piece, const BOARD board)
         int row = piece->row + shapes[piece->type][piece->rotation][i][0];
         int col = piece->col + shapes[piece->type][piece->rotation][i][1];
 
+        if (row>=BOARD_ROWS || col<0 || col>=BOARD_COLUMNS) return 0;
         if (board_cell_status(board, row, col)==CELL_FILLED)
             return 0;
     }
@@ -117,4 +118,15 @@ void tetromino_move_right(Tetro_piece *piece, const BOARD board)
     {
         piece->col = old_col;
     }
+}
+
+int tetromino_move_down(Tetro_piece *piece, const BOARD board)
+{
+    piece->row++;
+    if (!tetromino_can_place(piece, board))
+    {
+        piece->row--;
+        return 0;
+    }
+    return 1;
 }
