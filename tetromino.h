@@ -6,6 +6,8 @@
 #define TETRO_SIZE 4
 #define TETRO_COUNT 7
 
+extern const int shapes[TETRO_COUNT][4][4][2];
+
 typedef enum
 {
     PIECE_I = 0,
@@ -34,5 +36,7 @@ void tetromino_rotate(Tetro_piece *piece, const BOARD board);
 void tetromino_move_left(Tetro_piece *piece, const BOARD board);
 
 void tetromino_move_right(Tetro_piece *piece, const BOARD board);
+
+int tetromino_move_down(Tetro_piece *piece, const BOARD board);
 
 #endif

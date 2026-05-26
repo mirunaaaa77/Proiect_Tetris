@@ -1,11 +1,11 @@
 CC = gcc
-CFLAGS =-g -Wall -pedantic
+CFLAGS = -g -Wall
 
-all: final	
+all: final
 
-final: main.o board.o tetromino.o renderer.o
-	echo "Linking and producing the final application:"
-	$(CC) $(CFLAGS) main.o board.o tetromino.o renderer.o -o final -lncurses
+final: main.o board.o tetromino.o renderer.o input.o game.o
+	echo "Linking..."
+	$(CC) $(CFLAGS) main.o board.o tetromino.o renderer.o input.o game.o -o final -lncursesw
 	chmod +x final
 
 main.o: main.c
@@ -16,9 +16,15 @@ board.o: board.c
 
 tetromino.o: tetromino.c
 	$(CC) $(CFLAGS) -c tetromino.c -o tetromino.o
-	
+
 renderer.o: renderer.c
 	$(CC) $(CFLAGS) -c renderer.c -o renderer.o
 
+input.o: input.c
+	$(CC) $(CFLAGS) -c input.c -o input.o
+
+game.o: game.c
+	$(CC) $(CFLAGS) -c game.c -o game.o
+
 clean:
-	rm main.o board.o tetromino.o renderer.o final
+	rm -f *.o final

@@ -11,11 +11,11 @@ void board_init(BOARD board)
 
 int board_cell_status(const BOARD board, int row, int col)
 {
-    if ((row < 0) || (row >= BOARD_ROWS))
+    if ((row < 0) || (row > BOARD_ROWS))
     {
         return 0;
     }
-    if ((col < 0) || (col >= BOARD_COLUMNS))
+    if ((col < 0) || (col > BOARD_COLUMNS))
     {
         return 0;
     }
@@ -35,9 +35,9 @@ void board_lock_piece(BOARD board, int cell[][2], int count, int color) /* march
         int row = cell[i][0];
         int col = cell[i][1];
 
-        if (row < 0 || row >= BOARD_ROWS)
+        if (row < 0 || row > BOARD_ROWS)
             continue;    
-        if (col < 0 || col >= BOARD_COLUMNS)
+        if (col < 0 || col > BOARD_COLUMNS)
             continue;
 
         board[row][col] = color;
@@ -92,7 +92,7 @@ int board_clear_full_rows(BOARD board)
     return cleared;
 }
 
-void board_print(BOARD board)  //pentru debugging
+/*void board_print(BOARD board)  //pentru debugging
 {
     // bordura de sus
     printf("+");
@@ -120,6 +120,6 @@ void board_print(BOARD board)  //pentru debugging
         printf("-");
     printf("+\n");
     printf("\n");
-}
+}*/
 
 
