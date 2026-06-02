@@ -26,6 +26,13 @@ static int spawn_piece(Game *game)
 {
     tetromino_init(&game->piece, random_piece());
 
+        /* la fiecare 10 piese → piesa instabila */
+    game->piece_count++;
+    if (game->piece_count % 10 == 0)
+        game->is_unstable = 1;
+    else
+        game->is_unstable = 0;
+
     //daca nu poate fi plasata -> game over
     if (!tetromino_can_place(&game->piece, game->board))
         return 0;
@@ -34,46 +41,80 @@ static int spawn_piece(Game *game)
 }
 
 //Actualizeaza scorul dupa stergere
-static void update_score(Game *game, int cleared)
+static void update_score(Game *game, int cleared,int exploded_blocks)
 {
-    if (cleared <= 0) return;
+    if (cleared > 0)
+        game->score += SCORE_TABLE[cleared] * game->level;
 
-    game->score += SCORE_TABLE[cleared] * game->level;
+    /* 50 puncte per bloc distrus de explozie */
+    if (exploded_blocks > 0)
+        game->score += exploded_blocks * 50;
+
     game->lines += cleared;
 
-    //creste nivelul la fiecare 10 linii
+    /* creste nivelul la fiecare 10 linii */
     game->level = (game->lines / 10) + 1;
     game->drop_speed = get_drop_speed(game->level);
 }
 
-//Hard drop (coboara instant)
+
+/* Lipeste piesa pe tabla si spawneaza urmatoarea */
+static void lock_and_spawn(Game *game)
+{
+    int cells[4][2];
+    for (int i = 0; i < 4; i++)
+    {
+        cells[i][0] = game->piece.row +
+            shapes[game->piece.type][game->piece.rotation][i][0];
+        cells[i][1] = game->piece.col +
+            shapes[game->piece.type][game->piece.rotation][i][1];
+    }
+
+    /* culoarea depinde de tipul piesei — instabila primeste CELL_UNSTABLE */
+    int color = game->is_unstable ? CELL_UNSTABLE : game->piece.type + 1;
+    board_lock_piece(game->board, cells, 4, color);
+
+    /* sterge randurile pline si obtine blocurile explodiate */
+    int exploded_blocks = 0;
+    int cleared = board_clear_full_rows(game->board, &exploded_blocks);
+    update_score(game, cleared, exploded_blocks);
+
+    /* spawneaza piesa urmatoare */
+    if (!spawn_piece(game))
+        game->state = GAME_OVER;
+}
+
 static void hard_drop(Game *game)
 {
     while (tetromino_can_place(&game->piece, game->board))
         game->piece.row++;
 
-    //a mers prea jos cu 1 — da inapoi
+    /* a mers prea jos cu 1 — da inapoi */
     game->piece.row--;
+    
+    /* Blochează piesa imediat */
+    lock_and_spawn(game);
 }
 
-//── game_init ────────────────────────────
 void game_init(Game *game)
 {
     srand(time(NULL));
 
     board_init(game->board);
 
-    game->state      = GAME_RUNNING;
-    game->score      = 0;
-    game->level      = 1;
-    game->lines      = 0;
-    game->drop_timer = 0;
-    game->drop_speed = get_drop_speed(1);
+    game->state       = GAME_RUNNING;
+    game->score       = 0;
+    game->level       = 1;
+    game->lines       = 0;
+    game->drop_timer  = 0;
+    game->drop_speed  = get_drop_speed(1);
+    game->piece_count = 0;
+    game->is_unstable = 0;
 
     spawn_piece(game);
-
     renderer_init();
 }
+
 
 /* ── game_over ──────────────────────────── */
 void game_over(Game *game)
@@ -105,19 +146,7 @@ void game_run(Game *game)
                     tetromino_move_right(&game->piece, game->board);
                     break;
                 case ACTION_MOVE_DOWN:
-                   {
-                case ACTION_MOVE_DOWN:
-                if (!tetromino_move_down(&game->piece, game->board)) 
-                {
-                    // AICI trebuie să apelezi funcția ta care cimentează piesa!
-                    // Numele diferă în funcție de cum l-ai scris tu, de ex:
-                    board_lock_piece(game);
-                    board_clear_row(game);
-                    spawn_piece(game);
-                    
-                    // Opțional: resetează timpul (ts_start) pentru a nu avea o dublă-cădere imediată
-                    clock_gettime(CLOCK_MONOTONIC, &ts_start);
-                }
+                   {} tetromino_move_down(&game->piece, game->board);
                     break;
                 case ACTION_ROTATE:
                     tetromino_rotate(&game->piece, game->board);
@@ -155,34 +184,13 @@ void game_run(Game *game)
                 /* incearca sa coboare */
                 game->piece.row++;
 
-                if (!tetromino_can_place(&game->piece, game->board))
+        if (!tetromino_can_place(&game->piece, game->board))
                 {
-                    /* piesa s-a oprit — da inapoi si lipeste */
+                    /* piesa s-a oprit — da inapoi */
                     game->piece.row--;
 
-                    /* obtine celulele piesei */
-                    int cells[4][2];
-                    for (int i = 0; i < 4; i++)
-                    {
-                        extern const int shapes[7][4][4][2];
-                        cells[i][0] = game->piece.row +
-                            shapes[game->piece.type][game->piece.rotation][i][0];
-                        cells[i][1] = game->piece.col +
-                            shapes[game->piece.type][game->piece.rotation][i][1];
-                    }
-
-                    board_lock_piece(game->board, cells, 4,
-                                     game->piece.type + 1);
-
-                    //sterge randurile pline
-                    int cleared = board_clear_full_rows(game->board);
-                    update_score(game, cleared);
-
-                    /* spawneaza piesa urmatoare */
-                    if (!spawn_piece(game))
-                    {
-                        game->state = GAME_OVER;
-                    }
+                    /* Deleagă TOATĂ logica către funcția care o face deja corect */
+                    lock_and_spawn(game);
                 }
             }
         }
@@ -192,7 +200,7 @@ void game_run(Game *game)
         renderer_draw_board(game->board);
 
         if (game->state == GAME_RUNNING)
-            renderer_draw_piece(&game->piece);
+            renderer_draw_piece(&game->piece, game->is_unstable);
 
         renderer_draw_score(game->score, game->level, game->lines);
 
