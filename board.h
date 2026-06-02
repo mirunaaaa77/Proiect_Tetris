@@ -8,6 +8,7 @@
 /*valorile casutelor*/
 #define CELL_EMPTY 0
 #define CELL_FILLED 1
+#define CELL_UNSTABLE 8  // piesa instabila
 
 #define NOT_FULL 0
 #define FULL 1
@@ -22,9 +23,11 @@ void board_lock_piece(BOARD board, int cell[][2], int count, int color);
 
 int board_is_row_full(BOARD board, int row);
 
+int board_explode(BOARD board, int row);
+
 void board_clear_row(BOARD board, int row);
 
-int board_clear_full_rows(BOARD board);
+int board_clear_full_rows(BOARD board, int *exploded_blocs);
 
 void board_print(BOARD board); 
 

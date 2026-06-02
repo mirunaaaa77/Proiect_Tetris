@@ -4,7 +4,7 @@
 #include "board.h"
 #include "tetromino.h"
 
-/* Starile posibile ale jocului */
+//Starile posibile ale jocului 
 typedef enum
 {
     GAME_RUNNING = 0,
@@ -12,7 +12,7 @@ typedef enum
     GAME_OVER
 } GameState;
 
-/* Structura principala a jocului */
+//Structura principala a jocului
 typedef struct
 {
     BOARD       board;        /* tabla de joc          */
@@ -23,6 +23,8 @@ typedef struct
     int         lines;        /* linii sterse total    */
     int         drop_timer;   /* timer pentru cadere   */
     int         drop_speed;   /* viteza de cadere (ms) */
+    int         piece_count;  /* numara piesele spawmate */
+    int         is_unstable;  /* 1 daca piesa curenta e instabila */
 } Game;
 
 void game_init(Game *game);

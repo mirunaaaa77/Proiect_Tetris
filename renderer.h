@@ -8,7 +8,7 @@
 void renderer_init();
 void renderer_cleanup();
 void renderer_draw_board(const BOARD board);
-void renderer_draw_piece(const Tetro_piece *piece);
+void renderer_draw_piece(const Tetro_piece *piece, int is_unstable);
 void renderer_draw_score(int score, int level, int lines);
 void renderer_clear();
 
