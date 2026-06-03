@@ -38,16 +38,20 @@ Odată cu nivelul, crește și viteza de cădere a pieselor.
 # Structura Proiectului
 
 proiect/
-├── main.c          # Punct de intrare
-├── board.c         # Logica tablei de joc
+├── main.c          Punct de intrare
+
+├── board.c         Logica tablei de joc
 ├── board.h
-├── tetromino.c     # Piese, rotație, mișcare
+
+├── tetromino.c     Piese, rotație, mișcare
 ├── tetromino.h
-├── renderer.c      # Desenarea pe ecran (ncurses)
+├── renderer.c      Desenarea pe ecran (ncurses)
 ├── renderer.h
-├── input.c         # Gestionarea tastaturii
+
+├── input.c         Gestionarea tastaturii
 ├── input.h
-├── game.c          # Game loop, scor, nivel
+
+├── game.c          Game loop, scor, nivel
 ├── game.h
 └── Makefile
 Fiecare bloc distrus aduce 50 de puncte bonus
