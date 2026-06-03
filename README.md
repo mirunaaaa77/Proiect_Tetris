@@ -13,7 +13,7 @@ make all
 # Curăță fișierele compilate
 make clean
 
-Cum se joacă
+# Cum se joacă
 Piesele geometrice (Tetrominoes) cad din partea de sus a tablei de joc (20×10).
 Scopul este să completezi rânduri orizontale pentru a le elimina și a obține puncte.
 Jocul se termină când piesele ajung la marginea superioară.
@@ -35,7 +35,7 @@ Toți vecinii 3×3 ai blocului instabil sunt distruși
 Nivelul crește la fiecare 10 linii eliminate.
 Odată cu nivelul, crește și viteza de cădere a pieselor.
 
-Structura Proiectului
+#Structura Proiectului
 
 proiect/
 ├── main.c          # Punct de intrare
